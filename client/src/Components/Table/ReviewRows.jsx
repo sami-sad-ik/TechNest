@@ -61,14 +61,17 @@ const ReviewRows = ({ product, refetch }) => {
           </Link>
         </td>
         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
-          <span
+          <button
             onClick={() => openModal("featured")}
-            className="relative cursor-pointer inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+            disabled={product?.status === "featured"}
+            className="relative cursor-pointer group disabled:cursor-not-allowed inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
             <span
               aria-hidden="true"
-              className="absolute inset-0 bg-emerald-300 opacity-50 rounded-full"></span>
-            <span className="relative">Feature</span>
-          </span>
+              className="absolute inset-0 bg-emerald-300 opacity-50 group-disabled:bg-zinc-500 rounded-full"></span>
+            <span className="relative">
+              {product?.status === "featured" ? "Featured" : "Feature"}
+            </span>
+          </button>
         </td>
         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
           <button
@@ -84,23 +87,26 @@ const ReviewRows = ({ product, refetch }) => {
           </button>
         </td>
         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
-          <span
+          <button
             onClick={() => openModal("rejected")}
-            className="relative cursor-pointer inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+            disabled={product?.status === "rejected"}
+            className="relative cursor-pointer group disabled:cursor-not-allowed inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
             <span
               aria-hidden="true"
-              className="absolute inset-0 bg-red-200 opacity-50 rounded-full"></span>
-            <span className="relative">Reject</span>
-          </span>
+              className="absolute inset-0 bg-red-200 opacity-50 group-disabled:bg-zinc-500 rounded-full"></span>
+            <span className="relative">
+              {product?.status === "rejected" ? "Rejected" : "Reject"}
+            </span>
+          </button>
+          {/* multi functional modal */}
+          <MultiModal
+            handleAction={handleAction}
+            isOpen={isModalInfo?.open}
+            closeModal={closeModal}
+            status={isModalInfo?.status}
+          />
         </td>
       </tr>
-      {/* multi functional modal */}
-      <MultiModal
-        handleAction={handleAction}
-        isOpen={isModalInfo?.open}
-        closeModal={closeModal}
-        status={isModalInfo?.status}
-      />
     </>
   );
 };

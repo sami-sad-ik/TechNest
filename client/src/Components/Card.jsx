@@ -6,9 +6,12 @@ import { useMutation } from "@tanstack/react-query";
 import useAxiosSecure from "../Hooks/useAxiosSecure";
 import useAuth from "../Hooks/useAuth";
 import { useState } from "react";
+import useRole from "../Hooks/useRole";
+import toast from "react-hot-toast";
 
 const Card = ({ product }) => {
   const { user } = useAuth();
+  const { role } = useRole();
   const { _id, productImage, productName, tags, voters } = product;
   const [localVoter, setLocalVoter] = useState(voters || []);
   const navigate = useNavigate();
@@ -25,6 +28,7 @@ const Card = ({ product }) => {
   const upvoteHandler = async () => {
     try {
       if (!user) return navigate("/login");
+      if (role !== "guest") return toast.error("only guest can upvote");
       if (voted) {
         setLocalVoter((prev) => prev.filter((email) => email !== user?.email));
       } else {

@@ -17,6 +17,16 @@ app.use(express.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
 
+const verifyToken = (req, res, next) => {
+  const token = req.cookies?.token;
+  if (!token) return res.status(401).send({ message: "unauthorized access!" });
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+    if (err) return res.status(401).send({ message: "unauthorized access!" });
+    req.user = decoded;
+    next();
+  });
+};
+
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.bgu1g.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -48,8 +58,37 @@ async function run() {
         .send({ success: true });
     });
 
+    //middlewares
+    const verifyGuest = async (req, res, next) => {
+      const user = req.user;
+      const query = { email: user?.email };
+      const result = await usersCollection.findOne(query);
+      if (!result || result?.role !== "guest") {
+        return res.status(403).send({ message: "Forbidden Access!" });
+      }
+      next();
+    };
+    const verifyModerator = async (req, res, next) => {
+      const user = req.user;
+      const query = { email: user?.email };
+      const result = await usersCollection.findOne(query);
+      if (!result || result?.role !== "moderator") {
+        return res.status(403).send({ message: "Forbidden Access!" });
+      }
+      next();
+    };
+    const verifyAdmin = async (req, res, next) => {
+      const user = req.user;
+      const query = { email: user?.email };
+      const result = await usersCollection.findOne(query);
+      if (!result || result?.role !== "admin") {
+        return res.status(403).send({ message: "Forbidden Access!" });
+      }
+      next();
+    };
+
     // get specific  user role
-    app.get("/user/:email", async (req, res) => {
+    app.get("/user/:email", verifyToken, async (req, res) => {
       const email = req.params.email;
       const query = { email };
       const result = await usersCollection.findOne(query);
@@ -57,20 +96,25 @@ async function run() {
     });
 
     //get all users
-    app.get("/users", async (req, res) => {
+    app.get("/users", verifyToken, verifyAdmin, async (req, res) => {
       const result = await usersCollection.find().toArray();
       res.send(result);
     });
 
     // update user role
-    app.patch(`/update-user/:email`, async (req, res) => {
-      const userInfo = req.body;
-      const email = req.params.email;
-      const query = { email };
-      const updateDoc = { $set: { role: userInfo?.role } };
-      const result = await usersCollection.updateOne(query, updateDoc);
-      res.send(result);
-    });
+    app.patch(
+      `/update-user/:email`,
+      verifyToken,
+      verifyAdmin,
+      async (req, res) => {
+        const userInfo = req.body;
+        const email = req.params.email;
+        const query = { email };
+        const updateDoc = { $set: { role: userInfo?.role } };
+        const result = await usersCollection.updateOne(query, updateDoc);
+        res.send(result);
+      }
+    );
 
     //save user in database
     app.put("/user", async (req, res) => {
@@ -89,7 +133,7 @@ async function run() {
     });
 
     // upvote count
-    app.patch("/vote/:id", async (req, res) => {
+    app.patch("/vote/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
       const { email } = req.body;
       const query = { _id: new ObjectId(id) };
@@ -119,7 +163,7 @@ async function run() {
     });
 
     // get products added by specific user
-    app.get("/products/:email", async (req, res) => {
+    app.get("/products/:email", verifyToken, verifyGuest, async (req, res) => {
       const email = req.params.email;
       const query = { "owner.email": email };
       const result = await productsCollection.find(query).toArray();
@@ -132,7 +176,7 @@ async function run() {
       res.send(result);
     });
 
-    //get only pending products from db
+    //get only featured products from db
     app.get("/featured-products", async (req, res) => {
       const result = await productsCollection
         .find({ status: "featured" })
@@ -141,29 +185,39 @@ async function run() {
     });
 
     // delete a product
-    app.delete("/product/delete/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
-      const result = await productsCollection.deleteOne(query);
-      res.send(result);
-    });
+    app.delete(
+      "/product/delete/:id",
+      verifyToken,
+      verifyGuest,
+      async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await productsCollection.deleteOne(query);
+        res.send(result);
+      }
+    );
 
     // accept ,reject ,feature product
-    app.patch("/product/action/:id", async (req, res) => {
-      const id = req.params.id;
-      const updateInfo = req.body;
-      const query = { _id: new ObjectId(id) };
-      const updateDoc = {
-        $set: {
-          status: updateInfo?.status,
-        },
-      };
-      const result = await productsCollection.updateOne(query, updateDoc);
-      res.send(result);
-    });
+    app.patch(
+      "/product/action/:id",
+      verifyToken,
+      verifyModerator,
+      async (req, res) => {
+        const id = req.params.id;
+        const updateInfo = req.body;
+        const query = { _id: new ObjectId(id) };
+        const updateDoc = {
+          $set: {
+            status: updateInfo?.status,
+          },
+        };
+        const result = await productsCollection.updateOne(query, updateDoc);
+        res.send(result);
+      }
+    );
 
     // save a product in db
-    app.post("/product", async (req, res) => {
+    app.post("/product", verifyToken, verifyGuest, async (req, res) => {
       const productInfo = req.body;
       const result = await productsCollection.insertOne(productInfo);
       res.send(result);
