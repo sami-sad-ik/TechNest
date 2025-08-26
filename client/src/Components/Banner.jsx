@@ -1,7 +1,7 @@
 const Banner = ({ bannerImg, title, description }) => {
   return (
     <div
-      className={`w-full md:h-[550px] h-[450px] bg-cover bg-center flex justify-start items-center`}
+      className={`w-full h-full bg-cover bg-center flex justify-start items-center`}
       style={{ backgroundImage: `url(${bannerImg})` }}>
       <div className="md:pl-20 pl-5 md:w-3/5 w-10/12">
         <h2 className="md:text-6xl text-4xl font-lilita text-white font-semibold capitalize ">

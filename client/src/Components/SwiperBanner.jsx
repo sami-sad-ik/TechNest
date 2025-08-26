@@ -1,5 +1,8 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import Banner from "./Banner";
 import banner1 from "../assets/banner1.jpg";
 import banner2 from "../assets/banner2.jpg";
@@ -8,10 +11,14 @@ import banner3 from "../assets/banner3.jpg";
 const SwiperBanner = () => {
   return (
     <Swiper
+      modules={[Pagination, Autoplay, Navigation]}
       spaceBetween={50}
       slidesPerView={1}
-      onSlideChange={() => console.log("slide change")}
-      onSwiper={(swiper) => console.log(swiper)}>
+      pagination={{ clickable: true }}
+      autoplay={{ delay: 3000, disableOnInteraction: false }}
+      loop={true}
+      navigation={true}
+      className="w-full md:h-[550px] h-[450px]">
       <SwiperSlide>
         <Banner
           bannerImg={banner1}

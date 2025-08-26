@@ -184,6 +184,16 @@ async function run() {
       res.send(result);
     });
 
+    //get only trending products from db
+    app.get("/trending-products", async (req, res) => {
+      const result = await productsCollection
+        .find({})
+        .sort({ vote: -1 })
+        .limit(6)
+        .toArray();
+      res.send(result);
+    });
+
     // delete a product
     app.delete(
       "/product/delete/:id",
