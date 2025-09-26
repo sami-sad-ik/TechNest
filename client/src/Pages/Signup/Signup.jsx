@@ -4,8 +4,11 @@ import SocialLogin from "../../Components/SocialLogin";
 import { imageUpload } from "../../utils/imageUpload";
 import { ImSpinner8 } from "react-icons/im";
 import toast from "react-hot-toast";
+import { useState } from "react";
+import { VscEye, VscEyeClosed } from "react-icons/vsc";
 
 const SignUp = () => {
+  const [showPass, setShowPass] = useState(false);
   const { signUpUser, updateUserProfile, loading, setLoading } = useAuth();
   const navigate = useNavigate();
   const handleFormSubmit = async (e) => {
@@ -85,15 +88,22 @@ const SignUp = () => {
                   Password
                 </label>
               </div>
-              <input
-                type="password"
-                name="password"
-                autoComplete="new-password"
-                id="password"
-                required
-                placeholder="*******"
-                className="w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-cyan-500 bg-gray-200 text-gray-900"
-              />
+              <div className="relative">
+                <input
+                  type={showPass ? "text" : "password"}
+                  name="password"
+                  autoComplete="new-password"
+                  id="password"
+                  required
+                  placeholder="*******"
+                  className="w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-cyan-500 bg-gray-200 text-gray-900"
+                />
+                <span
+                  onClick={() => setShowPass(!showPass)}
+                  className="absolute top-3 right-2">
+                  {showPass ? <VscEye /> : <VscEyeClosed />}
+                </span>
+              </div>
             </div>
           </div>
 

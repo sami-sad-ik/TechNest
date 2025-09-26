@@ -13,19 +13,20 @@ const TrendingSection = () => {
       return data;
     },
   });
-  return (
-    <div className="w-11/12 mx-auto">
-      <SectionTitle
-        title={"Trending Products"}
-        paragraph={"See the the trending products here"}
-      />
-      <div className="grid lg:grid-cols-2 grid-cols-1 gap-3">
-        {products.map((product) => (
-          <Card key={product._id} product={product} />
-        ))}
+  if (products?.length > 0)
+    return (
+      <div className="w-11/12 mx-auto">
+        <SectionTitle
+          title={"Trending Products"}
+          paragraph={"See the the trending products here"}
+        />
+        <div className="grid lg:grid-cols-2 grid-cols-1 gap-3">
+          {products.map((product) => (
+            <Card key={product._id} product={product} />
+          ))}
+        </div>
       </div>
-    </div>
-  );
+    );
 };
 
 export default TrendingSection;

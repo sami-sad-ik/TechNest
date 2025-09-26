@@ -1,8 +1,8 @@
 import { BsTags } from "react-icons/bs";
 import { LuDot } from "react-icons/lu";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BiSolidUpArrow, BiUpArrow } from "react-icons/bi";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxiosSecure from "../Hooks/useAxiosSecure";
 import useAuth from "../Hooks/useAuth";
 import { useState } from "react";
@@ -12,7 +12,8 @@ import toast from "react-hot-toast";
 const Card = ({ product }) => {
   const { user } = useAuth();
   const { role } = useRole();
-  const { _id, productImage, productName, tags, voters } = product;
+  const queryClient = useQueryClient();
+  const { _id, productImage, productName, tags, vote, voters } = product;
   const [localVoter, setLocalVoter] = useState(voters || []);
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
@@ -23,6 +24,10 @@ const Card = ({ product }) => {
         email: user?.email,
       });
       return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries("trending-products");
+      queryClient.invalidateQueries("featured-products");
     },
   });
   const upvoteHandler = async () => {
@@ -68,10 +73,10 @@ const Card = ({ product }) => {
         }}
         className="">
         <button
-          className={`flex items-center justify-center border-2 hover:border-cyan-500 ${
+          className={`flex items-center justify-center gap-1 border-2 hover:border-cyan-500 ${
             voted ? "border-cyan-500 text-cyan-500" : ""
           } transition-all duration-300 w-10 h-10 rounded-md`}>
-          {voted ? <BiSolidUpArrow /> : <BiUpArrow />}
+          {voted ? <BiSolidUpArrow /> : <BiUpArrow />} {vote}
         </button>
       </div>
     </Link>

@@ -48,7 +48,7 @@ const Navbar = () => {
     </>
   );
   return (
-    <div className="lg:px-20 md:px-10 px-6 fixed bg-white w-screen z-10 shadow-sm ">
+    <div className="lg:px-20 md:px-10 px-6 fixed bg-gray-200 w-screen z-10 shadow-sm ">
       <div className="py-2 ">
         <div className="flex flex-row bg-opacity-40 items-center justify-between gap-3 md:gap-0">
           {/* Logo */}
@@ -131,18 +131,19 @@ const Navbar = () => {
             <div
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 md:py-1 md:px-2 border-[1px] border-neutral-200 flex flex-row items-center gap-3 rounded-full cursor-pointer hover:shadow-md transition">
-              <AiOutlineMenu />
-              <div className=" md:block">
-                {/* Avatar */}
-                <img
-                  className="rounded-full"
-                  referrerPolicy="no-referrer"
-                  src={user && user.photoURL ? user.photoURL : avatarImg}
-                  alt="profile"
-                  height="30"
-                  width="30"
-                />
-              </div>
+              {user ? (
+                <div className=" md:block">
+                  {/* Avatar */}
+                  <img
+                    className="w-11 h-11 object-cover rounded-full"
+                    referrerPolicy="no-referrer"
+                    src={user && user.photoURL ? user.photoURL : avatarImg}
+                    alt="profile"
+                  />
+                </div>
+              ) : (
+                <AiOutlineMenu />
+              )}
             </div>
             {isOpen && (
               <div className="absolute rounded-xl shadow-md w-[40vw] md:w-[10vw] bg-white overflow-hidden right-0 top-12 text-sm">

@@ -4,7 +4,7 @@ const Banner = ({ bannerImg, title, description }) => {
       className={`w-full h-full bg-cover bg-center flex justify-start items-center`}
       style={{ backgroundImage: `url(${bannerImg})` }}>
       <div className="md:pl-20 pl-5 md:w-3/5 w-10/12">
-        <h2 className="md:text-6xl text-4xl font-lilita text-white font-semibold capitalize ">
+        <h2 className="md:text-6xl text-4xl text-white font-semibold capitalize ">
           {title}
         </h2>
         <p className="md:pr-28 my-3 font-sans text-gray-200 md:text-sm text-xs font-semibold tracking-wider">

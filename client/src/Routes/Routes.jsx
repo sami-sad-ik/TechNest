@@ -7,7 +7,6 @@ import SignUp from "../Pages/Signup/Signup";
 import Dashboard from "../Pages/Dashboard/Dashboard";
 import AddProduct from "../Pages/Guest/AddProduct";
 import MyProducts from "../Pages/Guest/MyProducts";
-import RoomDetails from "../Pages/RoomDetails/RoomDetails";
 import ManageUsers from "../Pages/Admin/ManageUsers";
 import ReviewQueue from "../Pages/Moderator/ReviewQueue";
 import MyProfile from "../Pages/Guest/MyProfile";
@@ -16,6 +15,7 @@ import DashboardRedirect from "../Pages/Dashboard/DashboardRedirect";
 import GuestRoute from "./GuestRoute";
 import ModeratorRoute from "./ModeratorRoute";
 import AdminRoute from "./AdminRoute";
+import ProductDetails from "../Pages/ProductDetails/ProductDetails";
 
 export const Routes = createBrowserRouter([
   {
@@ -32,7 +32,7 @@ export const Routes = createBrowserRouter([
       },
       {
         path: "/product/:id",
-        element: <RoomDetails />,
+        element: <ProductDetails />,
       },
     ],
   },

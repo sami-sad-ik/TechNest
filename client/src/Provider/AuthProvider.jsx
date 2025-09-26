@@ -44,7 +44,10 @@ const AuthProvider = ({ children }) => {
       photoURL: photo,
     });
   };
-  const signOutUser = () => {
+  const signOutUser = async () => {
+    await axios.get(`${import.meta.env.VITE_API_URL}/logout`, {
+      withCredentials: true,
+    });
     setUser(null);
     return signOut(auth);
   };

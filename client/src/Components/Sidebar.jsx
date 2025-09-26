@@ -12,8 +12,8 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const handleSignOut = async () => {
     try {
-      await signOutUser();
       navigate("/");
+      await signOutUser();
     } catch (err) {
       console.log(err.message);
     }

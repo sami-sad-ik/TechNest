@@ -1,16 +1,10 @@
-@import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Lilita+One&display=swap");
-
-html {
-  overflow-y: scroll;
-}
+@import "tailwindcss";
 
 @theme {
   --font-lilita: "Lilita One", sans-serif;
 }
 
-.bg-img {
-  background: url(./assets/banner.jpg);
-  background-position: center;
-  background-size: cover;
+html {
+  overflow-y: scroll;
 }

@@ -19,6 +19,8 @@ const UserDataRows = ({ user, refetch }) => {
 
   const modalHandler = async (selected) => {
     const updateData = { role: selected };
+    if (user?.role === "admin")
+      return toast.error(`Admin can't change his own role`);
     try {
       await mutateAsync(updateData);
       setIsOpen(false);

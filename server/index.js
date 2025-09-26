@@ -8,7 +8,11 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 7000;
 
 const corsOptions = {
-  origin: ["http://localhost:5173", "http://localhost:5174"],
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "https://technest-9d1.web.app",
+  ],
   credentials: true,
 };
 
@@ -42,6 +46,7 @@ async function run() {
   const DB = client.db("TechNest");
   const usersCollection = DB.collection("users");
   const productsCollection = DB.collection("products");
+  const reviewsCollection = DB.collection("reviews");
   try {
     //auth related api
     app.post("/jwt", (req, res) => {
@@ -52,10 +57,26 @@ async function run() {
       res
         .cookie("token", token, {
           httpOnly: true,
-          secure: process.env.NODE_ENV,
-          sameSite: process.env.NODE_ENV ? "none" : "strict",
+          secure: process.env.NODE_ENV === "production",
+          sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
         })
         .send({ success: true });
+    });
+
+    //logout and clear token
+    app.get("/logout", (req, res) => {
+      try {
+        res
+          .clearCookie("token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+            maxAge: 0,
+          })
+          .send({ success: true });
+      } catch (err) {
+        res.status(500).send(err);
+      }
     });
 
     //middlewares
@@ -187,10 +208,18 @@ async function run() {
     //get only trending products from db
     app.get("/trending-products", async (req, res) => {
       const result = await productsCollection
-        .find({})
+        .find({ status: { $in: ["accepted", "featured"] } })
         .sort({ vote: -1 })
         .limit(6)
         .toArray();
+      res.send(result);
+    });
+
+    //get reviews for specific product
+    app.get("/reviews/:id", async (req, res) => {
+      const id = req.id;
+      const query = { product_id: id };
+      const result = await reviewsCollection.find(query).toArray();
       res.send(result);
     });
 
@@ -233,6 +262,12 @@ async function run() {
       res.send(result);
     });
 
+    //post a review
+    app.post("/review", async (req, res) => {
+      const reviewInfo = req.body;
+      const result = await reviewsCollection.insertOne(reviewInfo);
+      res.send(result);
+    });
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
@@ -241,6 +276,7 @@ async function run() {
   } finally {
   }
 }
+
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
