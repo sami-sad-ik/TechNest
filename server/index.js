@@ -197,6 +197,13 @@ async function run() {
       res.send(result);
     });
 
+    //get accepted products from db
+    app.get("/all-products", async (req, res) => {
+      const query = { status: { $nin: ["pending", "rejected"] } };
+      const result = await productsCollection.find(query).toArray();
+      res.send(result);
+    });
+
     //get only featured products from db
     app.get("/featured-products", async (req, res) => {
       const result = await productsCollection

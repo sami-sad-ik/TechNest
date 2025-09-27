@@ -48,7 +48,7 @@ const Navbar = () => {
     </>
   );
   return (
-    <div className="lg:px-20 md:px-10 px-6 fixed bg-gray-200 w-screen z-10 shadow-sm ">
+    <div className="lg:px-20 md:px-10 px-6 fixed bg-gray-200/90 w-screen z-10 shadow-sm ">
       <div className="py-2 ">
         <div className="flex flex-row bg-opacity-40 items-center justify-between gap-3 md:gap-0">
           {/* Logo */}
