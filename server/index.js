@@ -217,8 +217,8 @@ async function run() {
 
     //get reviews for specific product
     app.get("/reviews/:id", async (req, res) => {
-      const id = req.id;
-      const query = { product_id: id };
+      const id = req.params.id;
+      const query = { productId: id };
       const result = await reviewsCollection.find(query).toArray();
       res.send(result);
     });

@@ -138,7 +138,7 @@ const ProductDetails = () => {
         </div>
       </div>
       <Reviews id={id} />
-      <AddReviews />
+      <AddReviews id={id} ownerEmail={product?.owner?.email} />
     </div>
   );
 };

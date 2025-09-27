@@ -6,7 +6,7 @@ import { useState } from "react";
 import { ImSpinner8 } from "react-icons/im";
 import { Rating, ThinRoundedStar } from "@smastrom/react-rating";
 
-const AddReviews = ({ id }) => {
+const AddReviews = ({ id, ownerEmail }) => {
   const { user } = useAuth();
   const [rating, setRating] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -42,6 +42,9 @@ const AddReviews = ({ id }) => {
       productId,
     };
     try {
+      if (ownerEmail === reviewerEmail) {
+        return toast.error(`Can't review own product`);
+      }
       await mutateReview(reviewData);
       form.reset();
       setRating(0);
@@ -79,16 +82,17 @@ const AddReviews = ({ id }) => {
             className="block rounded-md w-full h-24 px-4 py-3 text-gray-800 text-md border"
             name="comment"
           />
-          {loading ? (
-            <ImSpinner8 className="animate-spin m-auto" />
-          ) : (
-            <input
-              type="submit"
-              value="Submit"
-              className="absolute bottom-2 right-2 px-3 py-1 font-semibold bg-zinc-200
-                    transform duration-300 hover:scale-[102%] rounded-md"
-            />
-          )}
+
+          <button
+            type="submit"
+            className="absolute bottom-2 right-2 flex justify-center items-center px-3 py-1 font-semibold bg-zinc-200
+                    transform duration-300 hover:scale-[102%] rounded-md">
+            {loading ? (
+              <ImSpinner8 className="animate-spin m-auto mx-2" />
+            ) : (
+              "Submit"
+            )}
+          </button>
         </div>
       </form>
     </div>
