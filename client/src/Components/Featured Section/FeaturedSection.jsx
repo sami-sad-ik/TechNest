@@ -6,7 +6,7 @@ import useAxiosPublic from "../../Hooks/useAxiosPublic";
 const FeaturedSection = () => {
   const axiosPublic = useAxiosPublic();
 
-  const { data: products = [], refetch } = useQuery({
+  const { data: products = [] } = useQuery({
     queryKey: ["featured-products"],
     queryFn: async () => {
       const { data } = await axiosPublic.get("/featured-products");
@@ -23,7 +23,7 @@ const FeaturedSection = () => {
         />
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-3">
           {products.map((product) => (
-            <Card key={product._id} product={product} refetch={refetch} />
+            <Card key={product._id} product={product} />
           ))}
         </div>
       </div>

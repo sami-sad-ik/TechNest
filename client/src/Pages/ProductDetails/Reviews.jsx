@@ -1,16 +1,42 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import { Rating, ThinRoundedStar } from "@smastrom/react-rating";
+import { PiDotsThreeVerticalBold } from "react-icons/pi";
+import useAuth from "../../Hooks/useAuth";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
+import { toast } from "react-hot-toast";
 
 const Reviews = ({ id }) => {
+  const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
-  const { data: reviews = [] } = useQuery({
+  const axiosSecure = useAxiosSecure();
+  const { data: reviews = [], refetch } = useQuery({
     queryKey: ["reviews"],
     queryFn: async () => {
       const { data } = await axiosPublic.get(`/reviews/${id}`);
       return data;
     },
   });
+
+  //delete review
+  const { mutateAsync } = useMutation({
+    mutationFn: async (id) => {
+      const { data } = await axiosSecure.delete(`/review/${id}`);
+      return data;
+    },
+    onSuccess: () => {
+      toast.success("Review deleted successfully");
+      refetch();
+    },
+  });
+  const handleDeleteReview = async (id) => {
+    try {
+      await mutateAsync(id);
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.message);
+    }
+  };
 
   if (reviews?.length > 0)
     return (
@@ -24,11 +50,11 @@ const Reviews = ({ id }) => {
                 alt="Avatar"
                 src={review?.reviewerImage}
               />
-              <div className="flex flex-col justify-start items-start">
+              <div className="flex flex-col justify-start items-start flex-1">
                 <h2
                   className="text-lg 
                 font-semibold ">
-                  {review?.reviewer}{" "}
+                  {review?.reviewer}
                 </h2>
                 <div>
                   <Rating
@@ -46,6 +72,24 @@ const Reviews = ({ id }) => {
                 </div>
                 <p className="text-zinc-700">{review?.comment}</p>
               </div>
+              {user?.email === review?.reviewerEmail && (
+                <div tabIndex={0} className="relative inline-block group">
+                  <button className="cursor-pointer hover:bg-zinc-200 p-1 rounded-full focus:outline-none">
+                    <PiDotsThreeVerticalBold />
+                  </button>
+
+                  {/* Dropdown */}
+                  <div
+                    className=" hidden absolute right-0 mt-1 w-28 rounded-lg
+                     bg-white shadow-lg group-focus-within:block">
+                    <button
+                      onClick={() => handleDeleteReview(review._id)}
+                      className="block w-full text-left px-3 py-2 hover:bg-zinc-100 rounded-lg">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         ))}

@@ -236,6 +236,14 @@ async function run() {
       }
     );
 
+    //delete  review
+    app.delete("/review/:id", verifyToken, async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await reviewsCollection.deleteOne(query);
+      res.send(result);
+    });
+
     // accept ,reject ,feature product
     app.patch(
       "/product/action/:id",
@@ -263,7 +271,7 @@ async function run() {
     });
 
     //post a review
-    app.post("/review", async (req, res) => {
+    app.post("/review", verifyToken, async (req, res) => {
       const reviewInfo = req.body;
       const result = await reviewsCollection.insertOne(reviewInfo);
       res.send(result);
