@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Banner = ({ bannerImg, title, description }) => {
   return (
     <div
@@ -10,9 +12,11 @@ const Banner = ({ bannerImg, title, description }) => {
         <p className="md:pr-28 my-3 font-sans text-gray-200 md:text-sm text-xs font-semibold tracking-wider">
           {description}
         </p>
-        <button className="px-4 md:py-2 py-1 bg-cyan-300 hover:bg-cyan-500 transform duration-300 active:scale-[98%] rounded-full md:text-lg text-base font-semibold ">
+        <Link
+          to={"/products"}
+          className="px-4 md:py-2 py-1 bg-cyan-300 hover:bg-cyan-500 transform duration-300 active:scale-[98%] rounded-full md:text-lg text-base font-semibold ">
           See Products
-        </button>
+        </Link>
       </div>
       <div></div>
     </div>

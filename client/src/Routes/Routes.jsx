@@ -16,11 +16,13 @@ import GuestRoute from "./GuestRoute";
 import ModeratorRoute from "./ModeratorRoute";
 import AdminRoute from "./AdminRoute";
 import ProductDetails from "../Pages/ProductDetails/ProductDetails";
+import ErrorPage from "../Pages/Error/ErrorPage";
 
 export const Routes = createBrowserRouter([
   {
     path: "/",
     Component: Root,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: "/",

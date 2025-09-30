@@ -199,7 +199,12 @@ async function run() {
 
     //get accepted products from db
     app.get("/all-products", async (req, res) => {
-      const query = { status: { $nin: ["pending", "rejected"] } };
+      const filter = req.query;
+      const query = {
+        status: { $nin: ["pending", "rejected"] },
+        productName: { $regex: filter.search, $options: "i" },
+      };
+
       const result = await productsCollection.find(query).toArray();
       res.send(result);
     });
